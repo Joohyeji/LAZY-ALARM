@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="kr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LAZY CLOCK</title>
+    <style>
+      @font-face {
+        font-family: 'sansation';
+        src: url('./src/Sansation_Light.ttf') format('truetype');
+      }
+      body {
+        padding: 0;
+        margin: 0;
+        background: #e3e3e3;
+        margin: 40px;
+        box-sizing: border-box;
+        font-family: 'sansation';
+      }
+      #title {
+        width: 1446px;
+        height: 180px;
+        flex-shrink: 0;
+        background: #f1ff27;
+        margin: 59px 0 15px 0;
+      }
+      h1 {
+        color: #000;
+        font-size: 9.3rem;
+        font-style: normal;
+        font-weight: 300;
+        line-height: normal;
+        margin: 0;
+      }
+      /* 시계 */
+      #clockCont {
+        width: 100%;
+        position: relative;
+      }
+      #clock {
+        font-size: 9rem;
+        font-style: normal;
+      }
+      #amPm {
+        font-size: 80px;
+        font-style: normal;
+        font-weight: 300;
+        line-height: normal;
+        margin-left: 50px;
+        position: absolute;
+      }
+
+      /* 움직이는 시계 */
+      .hand {
+        display: block;
+        position: absolute;
+        bottom: 4rem;
+        right: 5rem;
+        width: 31.5rem;
+        height: 31.5rem;
+        transform-origin: 100% 100%;
+        transition: transform 0.05s;
+      }
+      .second-hand {
+        height: 12.3125rem;
+        width: 0.1875rem;
+        background: #000;
+        position: absolute;
+        bottom: 15rem;
+        right: 15rem;
+      }
+      /* 이미지 */
+      img {
+        width: 100%;
+        position: absolute;
+      }
+
+      #move {
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: none;
+      }
+
+      #korean{
+        position: absolute;
+
+      }
+    </style>
+  </head>
+  <body>
+    <img id="move" src="./src/Alarm.png" />
+    <div id="title"><h1>ALARM EVERY 5SEC</h1></div>
+
+    <div id="clockCont"><span id="clock"></span><span id="amPm"></span></div>
+    <div class="hand">
+      <img src="./src/clock.png" />
+      <div class="hand second-hand"></div>
+    </div>
+
+    <script>
+      function displayTime() {
+        let currentTime = new Date();
+        let hours = modifyNumber(currentTime.getHours());
+        let minutes = modifyNumber(currentTime.getMinutes());
+        let seconds = modifyNumber(currentTime.getSeconds());
+        let amPm = 'AM';
+        //ampm설정
+        if (hours >= 12) {
+          amPm = 'PM';
+          hours = modifyNumber(hours - 12, 2);
+        }
+        //50초 이상 일 때 실행
+        if (seconds >= 50) {
+        }
+
+        const secondsDegrees = (seconds / 60) * 360 + 90;
+
+        let timeString = hours + ':' + minutes + ':' + seconds;
+        document.getElementById('clock').innerHTML = timeString;
+        document.getElementById('amPm').innerHTML = amPm;
+
+        const secondHand = document.querySelector('.second-hand');
+        secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+
+        // 알람
+        const move = document.querySelector('#move');
+        const audio = new Audio('./src/iPhone-Alarm-Original.mp3');
+        audio.loop = true;
+        if (seconds % 5 == 0) {
+          move.style.display = 'block';
+          audio.play();
+        }
+
+        move.addEventListener('click', () => {
+          move.style.display = 'none';
+          audio.pause();
+        });
+      }
+
+      //숫자가 작을 때 앞에 0을 붙여주는 함수
+      function modifyNumber(time) {
+        if (parseInt(time) < 10) {
+          return '0' + time;
+        } else {
+          return time;
+        }
+      }
+
+      window.onload = function () {
+        displayTime();
+        setInterval(displayTime, 1000); //1초마다 함수 실행
+      };
+
+      function setAlarm() {
+        setInterval(function () {
+          var currentTime = new Date();
+          var minutes = currentTime.getMinutes();
+
+          // 1분마다 알람 울리기
+          if (minutes % 1 === 0) {
+          }
+        }, 60000); // 1분(60초)마다 시간 업데이트 및 알람 체크
+      }
+
+      setAlarm(); // 알람 함수 호출하여 시작
+    </script>
+  </body>
+</html>
